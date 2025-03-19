@@ -19,11 +19,11 @@
 
 | **Thời gian** | **Công việc** |
 |--------------|--------------|
-| **Tuần 1 - 4** | Lựa chọn đề tài, nghiên cứu tài liệu & khóa học tham khảo 📚 |
-| **Tuần 4 - 5** | Tìm hiểu Docker, ôn tập JavaScript 🐳 |
-| **Tuần 5 - 6** | Ôn tập ReactJS ⚛️ |
-| **Tuần 6 - 7** | Ôn tập Node.js 🚀 |
-| **Tuần 7 - 8** | Tìm hiểu kiến trúc Microservices 🏗 |
-| **Tuần 8 - 11** | Xây dựng các chức năng chính của website 🛠 |
-| **Tuần 11 - 13** | Phát triển chức năng phụ, triển khai & testing 🧪 |
+| **Tuần 1 - 3** | Nguyên cứu lý thuyết và phân tích hệ thống 📚 |
+| **Tuần 4 - 6** | Thiết kế kiến trúc và giao diện người dùng 🐳 |
+| **Tuần 6 - 8** | Phát triển phần mềm và tích hợp  các chức năng chính |
+| **Tuần 9 - 10** | Kiểm thử, tối ưu hóa hệ thống và hoàn thiện tính năng |
+| **Tuần 11 - 12** | Triển khai hệ thống và viết báo cáo kết quả |
+| **Tuần 12 - 13** | Hoàn thiện báo cáo |
+| **Tuần 11 - 13** | Hoàn thiện báo cáo |
 | **Tuần 13 - 15** | Hoàn thiện báo cáo 📑 |
