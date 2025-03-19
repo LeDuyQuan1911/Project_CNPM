@@ -27,3 +27,15 @@
 | **Tuần 12 - 13** | Hoàn thiện báo cáo |
 | **Tuần 11 - 13** | Hoàn thiện báo cáo |
 | **Tuần 13 - 15** | Hoàn thiện báo cáo 📑 |
+
+## 📌 **Yêu cầu đề tài**  
+**Quản lý giải bóng đá vô địch quốc gia**  
+| **STT** | **Tên yêu cầu** |
+|--------------|--------------|
+|**1**|Tiếp nhận hồ sơ đăng ký |
+|**2**| Lập lịch thi đáu |
+|**3**|Ghi nhận kết quả thi đấu|
+|**4**|Tra cứu cầu thủ|
+|**5**|Lập báo cáo giải|
+|**6**|Thay đổi quy định|
+
