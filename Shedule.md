@@ -1,1 +1,1 @@
-[text](Proposal.docx)
+[Proposal](Proposal.docx)
