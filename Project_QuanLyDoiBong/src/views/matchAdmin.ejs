@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %></title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .section {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    .table-wrapper {
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Admin Dashboard</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link active" href="/admin">Trang chủ</a>
+        </li>
+        <!-- <li class="nav-item">
+          <a class="nav-link" href="#user-list">Danh sách người dùng</a>
+        </li> -->
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/player">Danh sách cầu thủ</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/teamAdmin">Danh sách các đội</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/match">Danh sách trận đấu </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/ranking">Bảng xếp hạng</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Đăng xuất</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container table-wrapper">
+
+  <h2 class="text-center mb-5 mt-4"><%= title %></h2>
+
+  <!-- Section: Chọn các đội tham gia thi đấu -->
+<!-- Section: Chọn các đội tham gia thi đấu -->
+<div class="section">
+  <h4 class="text-center mb-4">Chọn các đội tham gia thi đấu</h4>
+
+  <form id="generate-form">
+    <div class="row mb-4">
+      <% if (teams && teams.length > 0) { %>
+        <% teams.forEach((team) => { %>
+          <div class="col-md-4 mb-2">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="teams" value="<%= team._id %>" id="team_<%= team._id %>">
+              <label class="form-check-label" for="team_<%= team._id %>">
+                <%= team.team_name %>
+              </label>
+            </div>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <p class="text-center">Không có đội bóng nào để chọn!</p>
+      <% } %>
+    </div>
+
+    <!-- New: Input mùa giải -->
+    <div class="mb-4">
+      <label for="season" class="form-label">Mùa giải</label>
+      <input type="text" class="form-control" id="season" name="season" placeholder="Nhập tên mùa giải, ví dụ: 2025 hoặc Giải Xuân 2025" required>
+    </div>
+
+    <div class="text-center mt-4">
+      <button type="submit" class="btn btn-success">Tạo lịch thi đấu</button>
+    </div>
+  </form>
+</div>
+
+
+  <!-- Section: Danh sách trận đấu -->
+  <!-- Section: Danh sách trận đấu -->
+<div class="section">
+  <h4 class="text-center mb-4">Danh sách trận đấu</h4>
+
+  <!-- Bộ lọc mùa giải -->
+  <form id="filter-form" class="row g-3 mb-4">
+    <div class="col-md-6 offset-md-3">
+      <div class="input-group">
+        <select class="form-select" id="season-filter" name="season">
+          <option value="">-- Chọn mùa giải --</option>
+          <% if (seasons && seasons.length > 0) { %>
+            <% seasons.forEach((season) => { %>
+              <option value="<%= season %>" <%= selectedSeason === season ? 'selected' : '' %>><%= season %></option>
+            <% }) %>
+          <% } %>
+        </select>
+        <button class="btn btn-primary" type="submit">Lọc</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Bảng danh sách trận đấu -->
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle">
+      <thead class="table-primary text-center">
+        <tr>
+          <th>STT</th>
+          <th>Đội Nhà</th>
+          <th>Đội Khách</th>
+          <th>Ngày Thi đấu</th>
+          <th>Tỉ số</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (matches && matches.length > 0) { %>
+          <% matches.forEach((match, index) => { %>
+            <tr>
+              <td class="text-center"><%= index + 1 %></td>
+              <td><%= match.home_team_id ? match.home_team_id.team_name : 'N/A' %></td>
+              <td><%= match.away_team_id ? match.away_team_id.team_name : 'N/A' %></td>
+              <td class="text-center"><%= match.match_date.toLocaleString('vi-VN') %></td>
+              <td class="text-center">
+                <% if (match.result && match.result.home_goals !== null && match.result.away_goals !== null) { %>
+                  <%= match.result.home_goals %> - <%= match.result.away_goals %>
+                <% } else { %>
+                  Chưa cập nhật
+                <% } %>
+              </td>
+              <td class="text-center">
+                <button onclick="openUpdateScoreModal('<%= match._id %>')" class="btn btn-warning btn-sm mb-1">
+                  Cập nhật tỉ số
+                </button>                
+                <a href="/admin/match/<%= match._id %>/edit-detail" class="btn btn-info btn-sm mb-1">
+                  Cập nhật chi tiết
+                </a>
+                <button onclick="openUpdateDateModal('<%= match._id %>')" class="btn btn-info btn-sm mb-1">Sửa ngày</button>
+                <button onclick="deleteMatch('<%= match._id %>')" class="btn btn-danger btn-sm">Xóa</button>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="6" class="text-center">Không có trận đấu nào</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal cập nhật ngày -->
+<div class="modal fade" id="updateDateModal" tabindex="-1" aria-labelledby="updateDateModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="update-date-form" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateDateModalLabel">Cập nhật ngày thi đấu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="update-match-id">
+        <div class="mb-3">
+          <label for="new-match-date" class="form-label">Ngày thi đấu mới</label>
+          <input type="datetime-local" class="form-control" id="new-match-date" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Cập nhật</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+</div>
+
+<script>
+  function openUpdateDateModal(matchId) {
+    document.getElementById('update-match-id').value = matchId;
+    var updateModal = new bootstrap.Modal(document.getElementById('updateDateModal'));
+    updateModal.show();
+  }
+  
+  document.getElementById('update-date-form').addEventListener('submit', async function(event) {
+    event.preventDefault();
+  
+    const matchId = document.getElementById('update-match-id').value;
+    const newDate = document.getElementById('new-match-date').value;
+  
+    if (!newDate) {
+      alert('Vui lòng chọn ngày!');
+      return;
+    }
+  
+    try {
+      const response = await fetch(`/admin/match/${matchId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ match_date: newDate })
+      });
+  
+      const data = await response.json();
+      if (data.success) {
+        alert(data.message);
+        location.reload();
+      } else {
+        alert('Lỗi: ' + data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Có lỗi xảy ra!');
+    }
+  });
+  
+  async function deleteMatch(matchId) {
+    if (!confirm('Bạn có chắc chắn muốn xóa trận đấu này không?')) return;
+  
+    try {
+      const response = await fetch(`/admin/match/${matchId}`, {
+        method: 'DELETE'
+      });
+  
+      const data = await response.json();
+      if (data.success) {
+        alert(data.message);
+        location.reload();
+      } else {
+        alert('Lỗi: ' + data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Có lỗi xảy ra!');
+    }
+  }
+  </script>
+  
+
+<!-- Script -->
+<script>
+document.getElementById('generate-form').addEventListener('submit', async function(event) {
+  event.preventDefault();
+
+  const selectedTeams = Array.from(document.querySelectorAll('input[name="teams"]:checked'))
+                              .map(input => input.value);
+
+  const season = document.getElementById('season').value; // <<< Lấy giá trị mùa giải nhập vào
+
+  if (selectedTeams.length < 2) {
+    alert('Phải chọn ít nhất 2 đội!');
+    return;
+  }
+
+  if (!season.trim()) {
+    alert('Bạn phải nhập mùa giải!');
+    return;
+  }
+
+  try {
+    const response = await fetch('/admin/match', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ teams: selectedTeams, season }) // <<< Gửi thêm mùa giải lên server
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      alert(data.message);
+      window.location.href = '/admin/match';
+    } else {
+      alert('Lỗi: ' + data.message);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Có lỗi xảy ra!');
+  }
+});
+
+//
+
+document.getElementById('filter-form').addEventListener('submit', function(event) {
+  event.preventDefault();
+  
+  const selectedSeason = document.getElementById('season-filter').value;
+  let url = '/admin/match';
+
+  if (selectedSeason) {
+    url += `?season=${encodeURIComponent(selectedSeason)}`;
+  }
+
+  window.location.href = url;
+});
+
+
+</script>
+
+<script>
+  async function openUpdateScoreModal(matchId) {
+  const homeGoals = prompt('Nhập số bàn thắng đội nhà:');
+  const awayGoals = prompt('Nhập số bàn thắng đội khách:');
+
+  if (homeGoals === null || awayGoals === null) {
+    return; // Hủy
+  }
+
+  try {
+    const response = await fetch(`/admin/match/${matchId}/score`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        home_goals: Number(homeGoals),
+        away_goals: Number(awayGoals)
+      })
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      alert(data.message);
+      window.location.reload();
+    } else {
+      alert('Lỗi: ' + data.message);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Có lỗi xảy ra khi cập nhật tỉ số.');
+  }
+}
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

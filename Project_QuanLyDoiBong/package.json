@@ -1,0 +1,42 @@
+{
+  "name": "project_quanlydoibong",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon ./src/app.js",
+    "build:css": "tailwindcss -i ./src/input.css -o ./public/css/output.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "api-query-params": "5.4.0",
+    "bcryptjs": "3.0.2",
+    "body-parser": "2.2.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "16.4.7",
+    "ejs": "^3.1.10",
+    "express": "5.0.1",
+    "express-fileupload": "1.4.0",
+    "express-jwt": "8.5.1",
+    "install": "0.13.0",
+    "jsonwebtoken": "9.0.2",
+    "jwt-decode": "^4.0.0",
+    "mongoose": "6.7.2",
+    "mongoose-delete": "0.5.4",
+    "nodej2": "file:",
+    "npm": "10.9.2",
+    "project_quanlydoibong": "file:",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.3",
+    "autoprefixer": "^10.4.21",
+    "nodemon": "^2.0.20",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.3"
+  },
+  "description": ""
+}
