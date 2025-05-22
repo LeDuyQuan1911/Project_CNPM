@@ -8,13 +8,33 @@ const Team = require('../models/TeamModel');
 const Player = require('../models/PlayerModel');
 // Admin
 
-const createUser = async (req,res) =>{
-    const {username, password, email, phone_number, role} = req.body;
-    const result = await User.create({username, password, email, phone_number, role});
-    res.status(200).json(
-        {data: result, message: "User created successfully", status: true}
-    );
-}
+const createUser = async (req, res) => {
+  try {
+    const { username, password, email, phone_number, role } = req.body;
+
+    const newUser = await User.create({
+      username,
+      password,
+      email,
+      phone_number,
+      role: role || 'user' // nếu không có role thì mặc định là 'user'
+    });
+
+    res.render("login", {
+      title: "Login",
+      success: "Tạo tài khoản thành công, vui lòng đăng nhập.",
+      error: null
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: "Something went wrong",
+      status: false
+    });
+  }
+};
+
 
 const loginUser = async (req, res) => {
     const { username, password } = req.body;
@@ -29,7 +49,7 @@ const loginUser = async (req, res) => {
     if (user.role === 'admin') {
         return res.redirect('/admin');
     } else if (user.role === 'user') {
-        return res.redirect('/user');
+        return res.redirect('/user/createTeam');
     } else {
         return res.status(403).send("Invalid role");
     }
@@ -67,7 +87,7 @@ const createTeam = async (req, res, next) => {
         }
 
         // Nếu chỉ chọn 5 cầu thủ thì kiểm tra luôn:
-        if (players.length !== 5) {
+        if (players.length < 5) {
             return res.render('createTeam', {
                 title: "Đăng ký đội bóng",
                 error: "Bạn phải chọn đúng 5 cầu thủ cho đội bóng.",

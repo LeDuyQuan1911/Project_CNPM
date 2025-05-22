@@ -18,6 +18,9 @@ const apiRoutes = (app) => {
     app.get("/login",(req,res)=>{
         res.render("login", {title: "Login"});
     })
+    app.get("/register",(req,res)=>{
+        res.render("register", {title: "Register"});
+    })
     app.get("/user",( req, res) => {
         res.render("user", {title: "User"});
     })
@@ -46,6 +49,7 @@ const apiRoutes = (app) => {
     //Admin
     app.get("/admin",isAuthenticated,isAdmin("admin"), getAllUsers) // Lấy thông tin tất cả người dùng
     app.post("/admin",createUser); // Tạo nguời dùng mới
+    app.post("/register",createUser); // Tạo nguời dùng mới
     app.post("/player",isAuthenticated,isAdmin("admin"),createPlayer); // Tạo cầu thủ mới
     app.get("/player",isAuthenticated,isAdmin("admin"),getPlayer); // Lấy thông tin tất cả cầu thủ
     app.patch('/admin/teamAdmin/:teamId', isAuthenticated, isAdmin("admin"), updateTeamStatus )
