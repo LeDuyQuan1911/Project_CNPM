@@ -14,7 +14,7 @@
 ## 🛠 **Công nghệ sử dụng**  
 - **Front-end:** ReactJS ⚛️  
 - **Back-end:** Node.js / Express.js 🚀  
-- **Database:** MongoDB 🗄  
+- **Database:** MongoDB ( Mongoose ) 🗄  
 ## 📅 **Kế hoạch thực hiện**  
 
 | **Thời gian** | **Công việc** |
