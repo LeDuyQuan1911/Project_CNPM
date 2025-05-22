@@ -11,11 +11,11 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:3000", // Thay đổi nếu dùng port khác
+        url: "http://localhost:3000", 
       },
     ],
   },
-  apis: ["./router/*.js"], // Đường dẫn tới các file định nghĩa API (Swagger annotations)
+  apis: ["./router/*.js"], 
 };
 
 const swaggerSpec = swaggerJSDoc(options);
