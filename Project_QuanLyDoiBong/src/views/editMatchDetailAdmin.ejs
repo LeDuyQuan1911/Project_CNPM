@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; }
+    .form-section { background: white; padding: 30px; margin-top: 30px; border-radius: 10px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2 class="text-center mt-4"><%= title %></h2>
+
+  <div class="form-section">
+
+    <form id="update-detail-form">
+      <div class="mb-3">
+        <label class="form-label">Ngày & giờ thi đấu</label>
+        <input type="datetime-local" class="form-control" name="match_date" value="<%= match.match_date.toISOString().slice(0,16) %>">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Sân thi đấu</label>
+        <input type="text" class="form-control" name="stadium" value="<%= match.stadium || '' %>">
+      </div>
+
+      <h5 class="mt-4 mb-3">Danh sách bàn thắng</h5>
+
+      <div id="goals-section">
+        <% if (match.goals && match.goals.length > 0) { %>
+          <% match.goals.forEach((goal, index) => { %>
+            <div class="row mb-3 align-items-end">
+              <div class="col-md-3">
+                <select class="form-control" name="player_id">
+                  <% players.forEach((player) => { %>
+                    <option value="<%= player._id %>" <% if (player._id.toString() === goal.player_id._id.toString()) { %> selected <% } %>>
+                      <%= player.player_name %>
+                    </option>
+                  <% }) %>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <select class="form-control" name="team_id">
+                  <option value="<%= match.home_team_id._id %>" <% if (goal.team_id._id.toString() === match.home_team_id._id.toString()) { %> selected <% } %>>
+                    <%= match.home_team_id.team_name %>
+                  </option>
+                  <option value="<%= match.away_team_id._id %>" <% if (goal.team_id._id.toString() === match.away_team_id._id.toString()) { %> selected <% } %>>
+                    <%= match.away_team_id.team_name %>
+                  </option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <select class="form-control" name="goal_type">
+                  <option value="A" <% if (goal.goal_type === 'A') { %> selected <% } %>>A</option>
+                  <option value="B" <% if (goal.goal_type === 'B') { %> selected <% } %>>B</option>
+                  <option value="C" <% if (goal.goal_type === 'C') { %> selected <% } %>>C</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <input type="number" class="form-control" name="minute" min="0" max="120" value="<%= goal.minute %>">
+              </div>
+              <div class="col-md-2 text-end">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeGoal(this)">Xóa</button>
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <p class="text-center">Chưa có bàn thắng nào, hãy thêm!</p>
+        <% } %>
+      </div>
+
+      <div class="text-center mt-4">
+        <button type="button" class="btn btn-secondary mb-3" onclick="addGoal()">➕ Thêm bàn thắng</button>
+        <br>
+        <button type="submit" class="btn btn-primary">Lưu cập nhật</button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+<script>
+  function addGoal() {
+    const goalsSection = document.getElementById('goals-section');
+    const newGoal = `
+      <div class="row mb-3 align-items-end">
+        <div class="col-md-3">
+          <select class="form-control" name="player_id">
+            <% players.forEach((player) => { %>
+              <option value="<%= player._id %>"><%= player.player_name %></option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select class="form-control" name="team_id">
+            <option value="<%= match.home_team_id._id %>"><%= match.home_team_id.team_name %></option>
+            <option value="<%= match.away_team_id._id %>"><%= match.away_team_id.team_name %></option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select class="form-control" name="goal_type">
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <input type="number" class="form-control" name="minute" min="0" max="120" value="0">
+        </div>
+        <div class="col-md-2 text-end">
+          <button type="button" class="btn btn-danger btn-sm" onclick="removeGoal(this)">Xóa</button>
+        </div>
+      </div>`;
+    goalsSection.insertAdjacentHTML('beforeend', newGoal);
+  }
+
+  function removeGoal(btn) {
+    btn.closest('.row').remove();
+  }
+
+  document.getElementById('update-detail-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const matchDate = document.querySelector('input[name="match_date"]').value;
+    const stadium = document.querySelector('input[name="stadium"]').value;
+
+    const goals = Array.from(document.querySelectorAll('#goals-section .row')).map(row => {
+      return {
+        player_id: row.querySelector('select[name="player_id"]').value,
+        team_id: row.querySelector('select[name="team_id"]').value,
+        goal_type: row.querySelector('select[name="goal_type"]').value,
+        minute: parseInt(row.querySelector('input[name="minute"]').value)
+      };
+    });
+
+    try {
+      const response = await fetch(location.pathname, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ match_date: matchDate, stadium, goals })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert(data.message);
+        window.location.href = '/admin/match';
+      } else {
+        alert('Lỗi: ' + data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Có lỗi xảy ra!');
+    }
+  });
+</script>
+
+<script>
+    function addGoal() {
+      const goalsSection = document.getElementById('goals-section');
+      const newGoal = `
+        <div class="row mb-3 align-items-end">
+          <div class="col-md-3">
+            <select class="form-control" name="player_id">
+              <% players.forEach((player) => { %>
+                <option value="<%= player._id %>"><%= player.player_name %></option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <select class="form-control" name="team_id">
+              <option value="<%= match.home_team_id._id %>"><%= match.home_team_id.team_name %></option>
+              <option value="<%= match.away_team_id._id %>"><%= match.away_team_id.team_name %></option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <select class="form-control" name="goal_type">
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <input type="number" class="form-control" name="minute" min="0" max="120" value="0">
+          </div>
+          <div class="col-md-2 text-end">
+            <button type="button" class="btn btn-danger btn-sm" onclick="removeGoal(this)">Xóa</button>
+          </div>
+        </div>`;
+      goalsSection.insertAdjacentHTML('beforeend', newGoal);
+    }
+  
+    function removeGoal(btn) {
+      btn.closest('.row').remove();
+    }
+  
+    document.getElementById('update-detail-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+  
+      if (!confirm('Bạn chắc chắn muốn lưu cập nhật chi tiết trận đấu?')) {
+        return; // Hủy nếu người dùng không xác nhận
+      }
+  
+      const matchDate = document.querySelector('input[name="match_date"]').value;
+      const stadium = document.querySelector('input[name="stadium"]').value;
+  
+      const goals = Array.from(document.querySelectorAll('#goals-section .row')).map(row => {
+        return {
+          player_id: row.querySelector('select[name="player_id"]').value,
+          team_id: row.querySelector('select[name="team_id"]').value,
+          goal_type: row.querySelector('select[name="goal_type"]').value,
+          minute: parseInt(row.querySelector('input[name="minute"]').value)
+        };
+      });
+  
+      try {
+        const response = await fetch(location.pathname, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ match_date: matchDate, stadium, goals })
+        });
+  
+        const data = await response.json();
+        if (data.success) {
+          alert('Cập nhật thành công!');
+          window.location.href = '/admin/match';
+        } else {
+          alert('Lỗi: ' + data.message);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra!');
+      }
+    });
+  </script>
+  
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

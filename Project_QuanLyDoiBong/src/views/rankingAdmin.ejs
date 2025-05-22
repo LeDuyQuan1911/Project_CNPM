@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %></title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .section {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    .table-wrapper {
+      margin-top: 2rem;
+    }
+    .rank-badge {
+      font-size: 1rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Admin Dashboard</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link active" href="/admin">Trang chủ</a>
+        </li>
+        <!-- <li class="nav-item">
+          <a class="nav-link" href="#user-list">Danh sách người dùng</a>
+        </li> -->
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/player">Danh sách cầu thủ</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/teamAdmin">Danh sách các đội</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/match">Danh sách trận đấu </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/ranking">Bảng xếp hạng</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Đăng xuất</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container table-wrapper">
+  <h2 class="text-center mb-5 mt-4"><%= title %></h2>
+
+  <!-- Bộ lọc mùa giải -->
+<div class="section">
+  <form id="filter-form" class="row g-3 mb-4">
+    <div class="col-md-6 offset-md-3">
+      <div class="input-group">
+        <select class="form-select" id="season-filter" name="season">
+          <option value="">-- Chọn mùa giải --</option>
+          <% if (seasons && seasons.length > 0) { %>
+            <% seasons.forEach((season) => { %>
+              <option value="<%= season %>" <%= selectedSeason === season ? 'selected' : '' %>><%= season %></option>
+            <% }) %>
+          <% } %>
+        </select>
+        <button class="btn btn-primary" type="submit">Lọc</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+  <div class="section">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover align-middle">
+        <thead class="table-primary text-center">
+          <tr>
+            <th>Hạng</th>
+            <th>Tên Đội</th>
+            <th>Số trận</th>
+            <th>Thắng</th>
+            <th>Hòa</th>
+            <th>Thua</th>
+            <th>Bàn thắng</th>
+            <th>Bàn thua</th>
+            <th>Hiệu số</th>
+            <th>Điểm</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (rankings && rankings.length > 0) { %>
+            <% rankings.forEach((teamStat, index) => { %>
+              <tr class="text-center">
+                <td><span class="badge bg-secondary rank-badge"><%= index + 1 %></span></td>
+                <td><%= teamStat.team.team_name %></td>
+                <td><%= teamStat.played %></td>
+                <td><%= teamStat.win %></td>
+                <td><%= teamStat.draw %></td>
+                <td><%= teamStat.lose %></td>
+                <td><%= teamStat.goals_for %></td>
+                <td><%= teamStat.goals_against %></td>
+                <td><%= teamStat.goals_for - teamStat.goals_against %></td>
+                <td><strong><%= teamStat.points %></strong></td>
+              </tr>
+            <% }); %>
+          <% } else { %>
+            <tr>
+              <td colspan="10" class="text-center">Không có dữ liệu xếp hạng</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+<script>
+  document.getElementById('filter-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const selectedSeason = document.getElementById('season-filter').value;
+    let url = '/admin/ranking';
+  
+    if (selectedSeason) {
+      url += `?season=${encodeURIComponent(selectedSeason)}`;
+    }
+  
+    window.location.href = url;
+  });
+  </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

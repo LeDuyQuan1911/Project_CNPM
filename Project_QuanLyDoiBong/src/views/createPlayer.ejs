@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tạo cầu thủ</title>
+  
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .form-container {
+      margin-top: 50px;
+      padding: 30px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <% if (success) { %>
+      <div class="alert alert-success text-center" role="alert">
+        <%= success %>
+      </div>
+    <% } %>
+    <div class="form-container">
+      <h2 class="mb-4 text-center">Tạo cầu thủ mới</h2>
+
+      <form method="POST" action="/player">
+        <!-- Player Name -->
+        <div class="mb-3">
+          <label for="player_name" class="form-label">Tên cầu thủ</label>
+          <input type="text" class="form-control" id="player_name" name="player_name" placeholder="Nhập tên cầu thủ" required>
+        </div>
+
+        <!-- Player Type -->
+        <div class="mb-3">
+          <label for="player_type" class="form-label">Vị trí thi đấu</label>
+          <input type="text" class="form-control" id="player_type" name="player_type" placeholder="Nhập vị trí (Forward, Midfielder, Defender, Goalkeeper)" required>
+        </div>
+
+        <!-- Goals -->
+        <div class="mb-3">
+          <label for="goals" class="form-label">Số bàn thắng</label>
+          <input type="number" class="form-control" id="goals" name="goals" placeholder="Nhập số bàn thắng (nếu có)" min="0" value="0">
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary w-100">Tạo cầu thủ</button>
+      </form>
+
+      <!-- Back Button -->
+      <div class="text-center mt-3">
+        <a href="/admin" class="btn btn-link">← Quay về trang Admin</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
