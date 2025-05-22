@@ -38,9 +38,6 @@ const updateGoalsForPlayers = async () => {
   }
 };
 
-
-
-
 // Hàm tạo lịch thi đấu
 const generateMatchSchedule = async (req, res, next) => {
     try {
